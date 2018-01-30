@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.1.1 (Build 111U)" ts="2018-01-29 11:31:34">
+<Class name="EnsLib.EMail.OutlookOutboundAdapter">
+<Description><![CDATA[
+It is a subclass of EnsLib.EMail.OutboundAdapter dealing with SSL/TLS configuation
+in a less "magic-way" than the original. 
+<p/>
+The original implementation squeezed three things into one setting:
+<ul><li>The SSL/TLS configuration name</li>
+<li>The password used by the initial connection to the Outlook server</li>
+<li>Conditional telling to connect to the base (25) port without encryption,
+but after the successful connection make a TLS handshake and use the same base port but 
+encypted.</li></ul>
+<p/>
+Now this is splited into three properties.]]></Description>
+<Super>EnsLib.EMail.OutboundAdapter</Super>
+<TimeChanged>64672,60054.760236</TimeChanged>
+<TimeCreated>64672,58287.237114</TimeCreated>
+
+<Property name="SSLConfiguration">
+<Description>
+The SSL/TLS configuration name</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="SSLConfigurationPassword">
+<Description>
+Password requires your SSL Configuration when connecting. Optional</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="SwitchToTLS">
+<Description>
+Is TLS used on base port (25) for securing the communication instead of SSL at port 465.</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Parameter name="SETTINGS">
+<Default>-SSLConfig,SSLConfiguration:Connection:sslConfigSelector,SSLConfigurationPassword:Connection,SwitchToTLS:Connection</Default>
+</Parameter>
+
+<Method name="OnInit">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set ..SSLConfig = ..SSLConfiguration
+	if ..SSLConfigurationPassword'="" set ..SSLConfig = ..SSLConfig_"|"_..SSLConfigurationPassword
+	if ..SwitchToTLS set ..SSLConfig = ..SSLConfig_"*"
+	Quit ##super()
+]]></Implementation>
+</Method>
+</Class>
+</Export>
